@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ====================== BRANCH VIEWS ====================== -->
+
+    <!-- Branch List -->
+    <record id="view_custom_git_branch_list" model="ir.ui.view">
+        <field name="name">custom.git.branch.list</field>
+        <field name="model">custom.git.branch</field>
+        <field name="arch" type="xml">
+            <list string="Branches" decoration-info="commit_count > 0">
+                <field name="name"/>
+                <field name="repository_id"/>
+                <field name="commit_count"/>
+                <field name="last_commit_sha"/>
+                <field name="last_commit_date" widget="date"/>
+                <field name="last_sync" widget="date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Branch Form -->
+    <record id="view_custom_git_branch_form" model="ir.ui.view">
+        <field name="name">custom.git.branch.form</field>
+        <field name="model">custom.git.branch</field>
+        <field name="arch" type="xml">
+            <form string="Git Branch">
+                <header>
+                    <button name="action_sync_commits"
+                            type="object"
+                            string="Sync Commits from GitHub"
+                            class="btn-warning"
+                            icon="fa-cloud-download"
+                            groups="custom_git.group_git_admin"/>
+                    <button name="action_view_commits"
+                            type="object"
+                            string="View All Commits"
+                            class="btn-primary"
+                            icon="fa-list"
+                            invisible="commit_count == 0"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Branch name"/></h1>
+                    </div>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_commits" type="object" class="oe_stat_button" icon="fa-code">
+                            <field name="commit_count" string="Commits" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Branch Info">
+                            <field name="name" readonly="1"/>
+                            <field name="repository_id" readonly="1"/>
+                            <field name="last_commit_sha" readonly="1"/>
+                            <field name="last_commit_date" readonly="1"/>
+                            <field name="last_sync" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Branch Search -->
+    <record id="view_custom_git_branch_search" model="ir.ui.view">
+        <field name="name">custom.git.branch.search</field>
+        <field name="model">custom.git.branch</field>
+        <field name="arch" type="xml">
+            <search string="Search Branches">
+                <field name="name"/>
+                <field name="repository_id"/>
+                <separator/>
+                <filter name="group_repo" string="Repository" context="{'group_by': 'repository_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Branch Action -->
+    <record id="action_custom_git_branch" model="ir.actions.act_window">
+        <field name="name">Branches</field>
+        <field name="res_model">custom.git.branch</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_custom_git_branch_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No branches yet
+            </p>
+            <p>
+                Go to a repository and click <b>Sync Branches</b>
+                to load branches from GitHub.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== GIT DIFF WIZARD ==================== -->
+
+    <record id="view_git_diff_wizard_form" model="ir.ui.view">
+        <field name="name">git.local.diff.wizard.form</field>
+        <field name="model">git.local.diff.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Git Diff">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <i class="fa fa-exchange"/> Git Diff
+                            — Branch: <field name="current_branch" readonly="1" class="text-primary"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <field name="repository_id" readonly="1"/>
+                        <field name="diff_type" widget="radio"/>
+                    </group>
+                    <div class="o_form_buttons_edit text-center mb-3">
+                        <button name="action_run_diff"
+                                type="object"
+                                string="Run Diff"
+                                class="btn btn-primary"
+                                icon="fa-play"/>
+                    </div>
+                    <div invisible="not diff_output">
+                        <label for="diff_output"/>
+                        <div style="background:#1e1e1e;border-radius:6px;padding:12px;max-height:500px;overflow:auto;">
+                            <field name="diff_output"
+                                   readonly="1"
+                                   style="font-family:monospace;font-size:12px;
+                                          color:#d4d4d4;white-space:pre;
+                                          background:transparent;border:none;
+                                          width:100%;"/>
+                        </div>
+                    </div>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_diff_wizard" model="ir.actions.act_window">
+        <field name="name">Git Diff</field>
+        <field name="res_model">git.local.diff.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ==================== GIT ADD WIZARD ==================== -->
+
+    <record id="view_git_add_wizard_form" model="ir.ui.view">
+        <field name="name">git.local.add.wizard.form</field>
+        <field name="model">git.local.add.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Git Add">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <i class="fa fa-plus-square"/> Git Add
+                            — Branch: <field name="current_branch" readonly="1" class="text-primary"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <field name="repository_id" readonly="1"/>
+                        <field name="add_all"/>
+                        <field name="specific_files"
+                               widget="text"
+                               placeholder="src/models/my_model.py&#10;views/my_view.xml"
+                               invisible="add_all"
+                               required="not add_all"/>
+                    </group>
+                    <div invisible="not status_output">
+                        <label for="status_output"/>
+                        <div style="background:#f8f9fa;border-radius:4px;padding:8px;border:1px solid #dee2e6;">
+                            <field name="status_output" readonly="1"
+                                   style="font-family:monospace;font-size:12px;white-space:pre;
+                                          background:transparent;border:none;width:100%;"/>
+                        </div>
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            type="object"
+                            string="Git Add"
+                            class="btn-primary"
+                            icon="fa-plus"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_add_wizard" model="ir.actions.act_window">
+        <field name="name">Git Add</field>
+        <field name="res_model">git.local.add.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ==================== GIT COMMIT WIZARD ==================== -->
+
+    <record id="view_git_commit_wizard_form" model="ir.ui.view">
+        <field name="name">git.local.commit.wizard.form</field>
+        <field name="model">git.local.commit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Git Commit">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <i class="fa fa-save"/> Git Commit
+                            — Branch: <field name="current_branch" readonly="1" class="text-primary"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group string="Repository">
+                            <field name="repository_id" readonly="1"/>
+                            <field name="author_name"/>
+                            <field name="author_email" widget="email"/>
+                        </group>
+                        <group string="Staged Changes Preview">
+                            <field name="staged_output" readonly="1"
+                                   style="font-family:monospace;font-size:11px;white-space:pre-wrap;"
+                                   nolabel="1"/>
+                        </group>
+                    </group>
+                    <group string="Commit Message">
+                        <field name="commit_message"
+                               widget="text"
+                               placeholder="Fix: resolve issue with user login&#10;&#10;Add proper session validation and improve error messages."
+                               nolabel="1"
+                               required="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            type="object"
+                            string="Commit"
+                            class="btn-primary"
+                            icon="fa-save"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_commit_wizard" model="ir.actions.act_window">
+        <field name="name">Git Commit</field>
+        <field name="res_model">git.local.commit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ==================== GIT PUSH WIZARD ==================== -->
+
+    <record id="view_git_push_wizard_form" model="ir.ui.view">
+        <field name="name">git.local.push.wizard.form</field>
+        <field name="model">git.local.push.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Git Push">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <i class="fa fa-arrow-up"/> Git Push
+                            — Branch: <field name="current_branch" readonly="1" class="text-primary"/>
+                        </h2>
+                    </div>
+                    <div class="alert alert-warning" invisible="not force_push">
+                        <i class="fa fa-exclamation-triangle"/>
+                        <strong> Force push enabled.</strong>
+                        Using <code>--force-with-lease</code> — safer than force, but still rewrites remote history.
+                    </div>
+                    <group>
+                        <field name="repository_id" readonly="1"/>
+                        <field name="remote"/>
+                        <field name="branch" placeholder="Leave blank to push current branch"/>
+                        <field name="force_push"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            type="object"
+                            string="Push"
+                            class="btn-primary"
+                            icon="fa-arrow-up"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_push_wizard" model="ir.actions.act_window">
+        <field name="name">Git Push</field>
+        <field name="res_model">git.local.push.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ==================== GIT STASH WIZARD ==================== -->
+
+    <record id="view_git_stash_wizard_form" model="ir.ui.view">
+        <field name="name">git.local.stash.wizard.form</field>
+        <field name="model">git.local.stash.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Git Stash">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <i class="fa fa-inbox"/> Git Stash
+                            — Branch: <field name="current_branch" readonly="1" class="text-primary"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <field name="repository_id" readonly="1"/>
+                        <field name="stash_message" placeholder="WIP: work in progress on feature X"/>
+                    </group>
+                    <div invisible="not existing_stashes or existing_stashes == '(no stashes)'">
+                        <label for="existing_stashes"/>
+                        <div style="background:#f8f9fa;border-radius:4px;padding:8px;border:1px solid #dee2e6;">
+                            <field name="existing_stashes" readonly="1"
+                                   style="font-family:monospace;font-size:12px;white-space:pre;
+                                          background:transparent;border:none;width:100%;"/>
+                        </div>
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            type="object"
+                            string="Stash Changes"
+                            class="btn-primary"
+                            icon="fa-inbox"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_stash_wizard" model="ir.actions.act_window">
+        <field name="name">Git Stash</field>
+        <field name="res_model">git.local.stash.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ==================== GIT CHECKOUT WIZARD ==================== -->
+
+    <record id="view_git_checkout_wizard_form" model="ir.ui.view">
+        <field name="name">git.local.checkout.wizard.form</field>
+        <field name="model">git.local.checkout.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Git Checkout Branch">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <i class="fa fa-code-fork"/> Checkout Branch
+                            — Current: <field name="current_branch" readonly="1" class="text-warning"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <field name="repository_id" readonly="1"/>
+                        <field name="branch_name" placeholder="feature/my-feature"/>
+                        <field name="create_new"/>
+                    </group>
+                    <div invisible="not available_branches or available_branches == '(none)'">
+                        <label for="available_branches"/>
+                        <div style="background:#f8f9fa;border-radius:4px;padding:8px;border:1px solid #dee2e6;">
+                            <field name="available_branches" readonly="1"
+                                   style="font-family:monospace;font-size:12px;white-space:pre;
+                                          background:transparent;border:none;width:100%;"/>
+                        </div>
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            type="object"
+                            string="Checkout"
+                            class="btn-primary"
+                            icon="fa-code-fork"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_checkout_wizard" model="ir.actions.act_window">
+        <field name="name">Git Checkout Branch</field>
+        <field name="res_model">git.local.checkout.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ==================== GIT CONFLICT WIZARD ==================== -->
+
+    <record id="view_git_conflict_wizard_form" model="ir.ui.view">
+        <field name="name">git.conflict.wizard.form</field>
+        <field name="model">git.conflict.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Merge Conflict Detected">
+                <sheet>
+                    <div class="oe_title">
+                        <h2 class="text-danger">
+                            <i class="fa fa-exclamation-triangle"/> Merge Conflict Detected
+                        </h2>
+                    </div>
+                    <field name="instructions" widget="html" readonly="1" nolabel="1"/>
+                    <group string="Conflicting Files (git status)">
+                        <field name="conflict_status" readonly="1" nolabel="1"
+                               style="font-family:monospace;font-size:12px;white-space:pre;
+                                      background:#fff3cd;padding:8px;border-radius:4px;
+                                      border:1px solid #ffc107;width:100%;"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_open_repository"
+                            type="object"
+                            string="Back to Repository"
+                            class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_conflict_wizard" model="ir.actions.act_window">
+        <field name="name">Merge Conflict</field>
+        <field name="res_model">git.conflict.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
